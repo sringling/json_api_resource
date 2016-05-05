@@ -100,9 +100,7 @@ class ResourceTest < MiniTest::Test
     end
 
     User.stub :attribute_count, raise_client_error! do
-      assert_raises JsonApiResource::Errors::UnsuccessfulRequest do
-        assert_equal 500, UserResource.attribute_count.meta[:status]
-      end
+      assert_equal 500, UserResource.attribute_count.meta[:status]
     end
   end
 end

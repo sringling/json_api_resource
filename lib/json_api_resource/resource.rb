@@ -23,7 +23,6 @@ module JsonApiResource
     include JsonApiResource::Executable
     include JsonApiResource::Conversions
     include JsonApiResource::Cacheable
-    include JsonApiResource::ErrorHandleable
 
     attr_accessor :client, :cache_expires_in
     class_attribute :per_page
@@ -31,7 +30,7 @@ module JsonApiResource
     delegate :to_json, to: :attributes
 
     def initialize(opts={})
-      raise( JsonApiResource::Errors::JsonApiResourceError, class: self.class, message: "A resource must have a client class" ) unless client_class.present?
+      raise( JsonApiResourceError, class: self.class, message: "A resource must have a client class" ) unless client_class.present?
 
       self.client = self.client_class.new(self.schema)
       self.errors = ActiveModel::Errors.new(self)
@@ -88,7 +87,7 @@ module JsonApiResource
         super
       end
     rescue Multiconnect::Error::UnsuccessfulRequest => e
-      handle_failed_request e
+      empty_500_set
     end
 
     def respond_to_missing?(method_name, include_private = false)

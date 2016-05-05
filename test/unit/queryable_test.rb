@@ -40,18 +40,10 @@ class QueryableTest < MiniTest::Test
     end
   end
 
-  def test_client_can_handle_404_in_find
-    User.stub :find, JsonApiClient::ResultSet.new() do
-      refute PropUserResource.find 6
-    end
-  end
-
-  def test_client_errors_are_propagated_up_on_class_level_client_call
+  def test_client_errors_are_handled_on_class_level_client_call
     User.stub :where, raise_client_error! do
-      assert_raises JsonApiResource::Errors::UnsuccessfulRequest do
-        response = PropUserResource.where id: -5
-        assert_equal 500, response.meta[:status]
-      end
+      response = PropUserResource.where id: -5
+      assert_equal 500, response.meta[:status]
     end
   end
 end
