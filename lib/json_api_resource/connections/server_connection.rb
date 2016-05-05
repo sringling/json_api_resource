@@ -8,7 +8,6 @@ module JsonApiResource
       end
 
       def request( action, *args )
-
         client_args = args.deep_dup
         result = self.client.send action, *client_args
 
