@@ -29,7 +29,7 @@ module JsonApiResource
 
     delegate :to_json, to: :attributes
 
-    def initialize(opts={})
+    def initialize(opts = HashWithIndifferentAccess.new)
       raise( JsonApiResourceError, class: self.class, message: "A resource must have a client class" ) unless client_class.present?
 
       self.client = self.client_class.new(self.schema)
@@ -46,7 +46,11 @@ module JsonApiResource
       !new_record?
     end
 
-    def attributes=(attr = {})
+    def attributes=(attr = nil)
+      # The difference between doing this vs as the default parameter
+      # is that you can try to set attributes to nil without an exception this way
+      attr ||= HashWithIndifferentAccess.new
+
       client_params = attr.delete(:client)
       if attr.is_a? self.client_class
         self.client = attr

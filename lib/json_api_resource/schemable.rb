@@ -23,6 +23,8 @@ module JsonApiResource
       protected
 
       def populate_missing_fields
+        self.attributes ||= HashWithIndifferentAccess.new
+
         self.class.schema.each_pair do |key, value|
           unless self.attributes.has_key?(key)
             self.attributes[key] = value
